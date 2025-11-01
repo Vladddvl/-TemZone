@@ -1,0 +1,24 @@
+{% extends 'temzone/base.html' %}
+
+{% block content %}
+<section id="topics">
+  <aside>
+    <h2>Категории:</h2>
+    <ul>
+      {for i in }
+      <li>Online work</li>
+      <li>Investments</li>
+      <li>Business and entrepreneurship</li>
+      <li>Social networks and content making</li>
+      <li>Passive income</li>
+    </ul>
+  </aside>
+  <div class="grid">
+    <div class="card">Topic #1</div>
+    <div class="card">Topic #2</div>
+    <div class="card">Topic #3</div>
+    <div class="card">Topic #4</div>
+    <div class="card">Topic #5</div>
+  </div>
+</section>
+{% endblock %}
