@@ -30,3 +30,17 @@ db.sqlite3-journal
 # Static files (если собираются collectstatic)
 /staticfiles/
 /mediafiles/
+
+# Django production settings
+/production_settings.py
+
+# Database
+*.db
+
+# PyCharm
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,16 +1,16 @@
 from django.shortcuts import render
 from django.db.models import Q
-from .models import Topic
+from content.models import Topic
 from django.shortcuts import render
 
 def index(request):
     return render(request, 'temzone/index.html')
 
 def instruments(request):
-    return render(request, 'temzone/instruments.html')
+    return render(request, 'tools/instruments.html')
 
 def news(request):
-    return render(request, 'temzone/news.html')
+    return render(request, 'news/news.html')
 
 # Поиск
 def search(request):
