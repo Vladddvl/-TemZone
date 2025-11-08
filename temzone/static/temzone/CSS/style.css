@@ -138,6 +138,7 @@ aside {
   color: #1e1e1e;
 }
 
+
 /* Форма */
 form {
   display: flex;
@@ -151,6 +152,7 @@ input, button {
   border: none;
 }
 
+
 /* Новости */
 .news-item {
   background-color: #333;
@@ -159,6 +161,7 @@ input, button {
   border-radius: 10px;
 }
 
+
 /* Футер */
 footer {
   text-align: center;
@@ -166,11 +169,6 @@ footer {
   background-color: #222;
 }
 
-footer {
-  text-align: center;
-  padding: 10px;
-  background-color: #222;
-}
 
 /* Модальное окно */
 .modal-overlay {
@@ -249,4 +247,101 @@ footer {
 
 .news-list a {
   color: #ff4500;
+}
+
+/* РАбота кнопок фильтрации в index.html */
+.criteria-with-buttons {
+  margin-top: 20px;
+}
+
+.criteria-list {
+  list-style: none;
+  padding: 0;
+}
+
+.criteria-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #444;
+}
+
+.criteria-list li:last-child {
+  border-bottom: none;
+}
+
+.criteria-list li span {
+  color: #F6E7D8;
+  font-weight: 500;
+  min-width: 180px;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-btn {
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #2C2C2C;
+  color: #F6E7D8;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  min-width: 70px;
+}
+
+.filter-btn:hover {
+  border-color: rgba(241, 73, 2, 0.5);
+  background: #3A3A3A;
+}
+
+.filter-btn.active {
+  background: rgba(241, 73, 2, 0.2);
+  border-color: rgba(241, 73, 2, 1);
+  color: rgba(241, 73, 2, 1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .criteria-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .criteria-list li span {
+    min-width: auto;
+  }
+
+  .button-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+
+/* Карточки тем */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.card {
+  background: linear-gradient(135deg, #2C2C2C 0%, #3A3A3A 100%);
+  padding: 25px;
+  border-radius: 12px;
+  color: #F6E7D8;
+  border: 1px solid #444;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  /* Фиксированная высота или минимальная высота */
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }

@@ -1,24 +1,458 @@
 {% extends 'temzone/base.html' %}
+{% load static %}
 
 {% block content %}
 <section id="topics">
   <aside>
-    <h2>Категории:</h2>
-    <ul>
-      {for i in }
-      <li>Online work</li>
-      <li>Investments</li>
-      <li>Business and entrepreneurship</li>
-      <li>Social networks and content making</li>
-      <li>Passive income</li>
-    </ul>
+    <h2>Выберите:</h2>
+
+    <!-- Выпадающий список категорий -->
+    <div class="category-dropdown">
+      <select class="form-select" onchange="filterByCategory(this.value)">
+        <option value="">Все категории</option>
+        {% for category in categories %}
+        <option value="{{ category.id }}">{{ category.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- СПИСОК С КРИТЕРИЯМИ И КНОПКАМИ -->
+    <div class="criteria-with-buttons">
+      <ul class="criteria-list">
+        <li>
+          <span>Требуемое время</span>
+          <div class="button-group">
+            <button class="filter-btn" data-criteria="time" data-value="fast">Быстро</button>
+            <button class="filter-btn" data-criteria="time" data-value="medium">Средне</button>
+            <button class="filter-btn" data-criteria="time" data-value="long">Долго</button>
+          </div>
+        </li>
+        <li>
+          <span>Начальные вложения</span>
+          <div class="button-group">
+            <button class="filter-btn" data-criteria="investment" data-value="low">Низкие</button>
+            <button class="filter-btn" data-criteria="investment" data-value="medium">Средние</button>
+            <button class="filter-btn" data-criteria="investment" data-value="high">Высокие</button>
+          </div>
+        </li>
+        <li>
+          <span>Актуальность</span>
+          <div class="button-group">
+            <button class="filter-btn" data-criteria="relevance" data-value="high">Высокая</button>
+            <button class="filter-btn" data-criteria="relevance" data-value="medium">Средняя</button>
+            <button class="filter-btn" data-criteria="relevance" data-value="low">Низкая</button>
+          </div>
+        </li>
+        <li>
+          <span>Сложность</span>
+          <div class="button-group">
+            <button class="filter-btn" data-criteria="difficulty" data-value="easy">Легко</button>
+            <button class="filter-btn" data-criteria="difficulty" data-value="medium">Средне</button>
+            <button class="filter-btn" data-criteria="difficulty" data-value="hard">Сложно</button>
+          </div>
+        </li>
+        <li>
+          <span>Возможность заработка</span>
+          <div class="button-group">
+            <button class="filter-btn" data-criteria="earnings" data-value="high">Высокая</button>
+            <button class="filter-btn" data-criteria="earnings" data-value="medium">Средняя</button>
+            <button class="filter-btn" data-criteria="earnings" data-value="low">Низкая</button>
+          </div>
+        </li>
+        <li>
+          <span>Онлайн</span>
+          <div class="button-group">
+            <button class="filter-btn" data-criteria="online" data-value="yes">Да</button>
+            <button class="filter-btn" data-criteria="online" data-value="no">Нет</button>
+            <button class="filter-btn" data-criteria="online" data-value="both">Оба</button>
+          </div>
+        </li>
+        <li>
+          <span>Риски</span>
+          <div class="button-group">
+            <button class="filter-btn" data-criteria="risk" data-value="low">Низкие</button>
+            <button class="filter-btn" data-criteria="risk" data-value="medium">Средние</button>
+            <button class="filter-btn" data-criteria="risk" data-value="high">Высокие</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Кнопка сброса -->
+    <div class="filter-actions">
+      <button onclick="resetFilters()" class="reset-btn">
+        <svg class="reset-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+        </svg>
+        Сбросить фильтры
+      </button>
+    </div>
   </aside>
+
   <div class="grid">
-    <div class="card">Topic #1</div>
-    <div class="card">Topic #2</div>
-    <div class="card">Topic #3</div>
-    <div class="card">Topic #4</div>
-    <div class="card">Topic #5</div>
-  </div>
+  {% for topic in topics %}
+    <div class="card" data-topic-id="{{ topic.id }}">
+      {% if topic.image %}
+        <img src="{{ topic.image.url }}" alt="{{ topic.title }}" class="card-image">
+      {% endif %}
+
+      <div class="card-content">
+        <h3 class="card-title">{{ topic.title }}</h3>
+
+        {% if topic.short_description %}
+          <p class="card-description">{{ topic.short_description }}</p>
+        {% endif %}
+
+<!--        <div class="card-meta">-->
+<!--          <span class="card-category">{{ topic.category.name }}</span>-->
+<!--          <span class="card-views">👁️ {{ topic.view_count }}</span>-->
+<!--          <span class="card-likes">❤️ {{ topic.like_count }}</span>-->
+<!--        </div>-->
+
+<!--        <div class="card-date">-->
+<!--            {{ topic.created_at|date:"d.m.Y" }}-->
+<!--        </div>-->
+      </div>
+    </div>
+  {% empty %}
+    <div class="no-topics">
+      <p>😔 Темы не найдены</p>
+      {% if current_category %}
+        <p>В категории "{{ current_category.name }}" пока нет тем</p>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
 </section>
+
+<style>
+/* Выпадающий список категорий */
+.category-dropdown {
+  margin-bottom: 20px;
+}
+
+.category-dropdown select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #444;
+  border-radius: 8px;
+  background: #1e1e1e;
+  color: #F6E7D8;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23F6E7D8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.category-dropdown select:focus {
+  outline: none;
+  border-color: rgba(241, 73, 2, 1);
+  box-shadow: 0 0 0 2px rgba(241, 73, 2, 0.2);
+}
+
+.category-dropdown select:hover {
+  border-color: rgba(241, 73, 2, 0.5);
+}
+
+
+/* Кнопки фильтрации */
+.criteria-with-buttons {
+  margin-top: 20px;
+}
+
+.criteria-list {
+  list-style: none;
+  padding: 0;
+}
+
+.criteria-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #444;
+}
+
+.criteria-list li:last-child {
+  border-bottom: none;
+}
+
+.criteria-list li span {
+  color: #F6E7D8;
+  font-weight: 500;
+  min-width: 180px;
+}
+
+.button-group {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-btn {
+  padding: 8px 12px;
+  border: 1px solid #444;
+  border-radius: 6px;
+  background: #2C2C2C;
+  color: #F6E7D8;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  min-width: 70px;
+}
+
+.filter-btn:hover {
+  border-color: rgba(241, 73, 2, 0.5);
+  background: #3A3A3A;
+}
+
+.filter-btn.active {
+  background: rgba(241, 73, 2, 0.2);
+  border-color: rgba(241, 73, 2, 1);
+  color: rgba(241, 73, 2, 1);
+}
+
+/* Кнопка сброса */
+.filter-actions {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #444;
+  text-align: center;
+}
+
+.reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #444 0%, #555 100%);
+  color: #F6E7D8;
+  border: 2px solid #666;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.reset-btn:hover {
+  background: linear-gradient(135deg, #555 0%, #666 100%);
+  border-color: rgba(241, 73, 2, 0.5);
+  color: rgba(241, 73, 2, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(241, 73, 2, 0.2);
+}
+
+.reset-btn:active {
+  transform: translateY(0);
+}
+
+.reset-icon {
+  transition: transform 0.3s ease;
+}
+
+.reset-btn:hover .reset-icon {
+  transform: scale(1.2);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .criteria-list li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .criteria-list li span {
+    min-width: auto;
+  }
+
+  .button-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+</style>
+
+<script>
+// Выпадающий список
+function filterByCategory(categoryId) {
+  if (categoryId) {
+    window.location.href = `?category=${categoryId}`;
+  } else {
+    window.location.href = `/`;
+  }
+}
+
+// Кнопки фильтрации
+let activeFilters = {};
+
+document.querySelectorAll('.filter-btn').forEach(button => {
+  button.addEventListener('click', function() {
+    const criteria = this.dataset.criteria;
+    const value = this.dataset.value;
+
+    document.querySelectorAll(`.filter-btn[data-criteria="${criteria}"]`).forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    this.classList.add('active');
+    activeFilters[criteria] = value;
+    applyFilters();
+  });
+});
+
+function applyFilters() {
+  console.log('Активные фильтры:', activeFilters);
+  const filtersInfo = Object.entries(activeFilters).map(([key, value]) => {
+    return `${key}: ${value}`;
+  }).join(', ');
+
+  if (filtersInfo) {
+    console.log('Применены фильтры:', filtersInfo);
+  }
+}
+
+function resetFilters() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  activeFilters = {};
+  applyFilters();
+
+  const resetBtn = document.querySelector('.reset-btn');
+  resetBtn.style.transform = 'scale(0.95)';
+  setTimeout(() => {
+    resetBtn.style.transform = 'scale(1)';
+  }, 150);
+
+  console.log('✅ Все фильтры сброшены');
+}
+</script>
+
+<!--Стиль и размер карточек тем-->
+<style>
+  .grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.card {
+  width: 310px; /* Фиксированная ширина */
+  height: 300px; /* Фиксированная высота */
+  flex: 0 0 auto; /* Важно! Не растягивается и не сжимается */
+  background: linear-gradient(135deg, #2C2C2C 0%, #3A3A3A 100%);
+  padding: 25px;
+  border-radius: 12px;
+  color: #F6E7D8;
+  border: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  background: linear-gradient(135deg, #2C2C2C 0%, #3A3A3A 100%);
+  padding: 25px;
+  border-radius: 12px;
+  color: #F6E7D8;
+  border: 1px solid #444;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  /* Фиксированная высота или минимальная высота */
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+<!--.card::before {-->
+<!--  content: '';-->
+<!--  position: absolute;-->
+<!--  top: 0;-->
+<!--  left: 0;-->
+<!--  right: 0;-->
+<!--  height: 3px;-->
+<!--  background: linear-gradient(90deg, rgba(241, 73, 2, 1), rgba(246, 231, 216, 1));-->
+<!--}-->
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(241, 73, 2, 0.2);
+  border-color: rgba(241, 73, 2, 0.5);
+}
+
+.card-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.card-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  color: #F6E7D8;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  line-height: 1.3;
+}
+
+.card-description {
+  color: #B0B0B0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin-bottom: 15px;
+  flex-grow: 1;
+}
+
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 0.8rem;
+}
+
+<!--.card-category {-->
+<!--  background: rgba(241, 73, 2, 0.2);-->
+<!--  color: rgba(241, 73, 2, 1);-->
+<!--  padding: 4px 8px;-->
+<!--  border-radius: 12px;-->
+<!--  border: 1px solid rgba(241, 73, 2, 0.3);-->
+<!--}-->
+
+.card-views, .card-likes {
+  color: #888;
+}
+
+.card-date {
+  color: #666;
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.no-topics {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+}
+
+.no-topics p {
+  margin-bottom: 10px;
+}
+
+</style>
 {% endblock %}

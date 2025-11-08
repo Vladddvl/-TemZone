@@ -38,16 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'temzone',
-    'users',
+    # 'users',
     'content',
-    'payments',
+    # 'payments',
     'tools',
     'news',
 
 ]
 
 #Добавляем кастумную модель пользователя
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'auth.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

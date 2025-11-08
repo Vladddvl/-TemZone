@@ -1,10 +1,13 @@
+from pydoc_data.topics import topics
+
 from django.shortcuts import render
 from django.db.models import Q
-from content.models import Topic
 from django.shortcuts import render
-
+from content.models import Category, Topic
 def index(request):
-    return render(request, 'temzone/index.html')
+    categories = Category.objects.all()
+    topics = Topic.objects.all()
+    return render(request, 'temzone/index.html',{'categories': categories, 'topics': topics})
 
 def instruments(request):
     return render(request, 'tools/instruments.html')
@@ -32,3 +35,5 @@ def search(request):
     }
 
     return render(request, 'temzone/search.html', context)
+
+
