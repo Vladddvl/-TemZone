@@ -8,7 +8,7 @@
 
     <!-- Выпадающий список категорий -->
     <div class="category-dropdown">
-      <select class="form-select" onchange="filterByCategory(this.value)">
+      <select class="form-select" onchange="filterTopics(this.value)">
         <option value="">Все категории</option>
         {% for category in categories %}
         <option value="{{ category.id }}">{{ category.name }}</option>
@@ -89,39 +89,26 @@
     </div>
   </aside>
 
-  <div class="grid">
-  {% for topic in topics %}
-    <div class="card" data-topic-id="{{ topic.id }}">
-      {% if topic.image %}
+  <div class="grid" id="topics-grid">
+    {% for topic in topics %}
+    <div class="card" data-topic-id="{{ topic.id }}" data-category-id="{{ topic.category.id }}">
+        {% if topic.image %}
         <img src="{{ topic.image.url }}" alt="{{ topic.title }}" class="card-image">
-      {% endif %}
-
-      <div class="card-content">
-        <h3 class="card-title">{{ topic.title }}</h3>
-
-        {% if topic.short_description %}
-          <p class="card-description">{{ topic.short_description }}</p>
         {% endif %}
 
-<!--        <div class="card-meta">-->
-<!--          <span class="card-category">{{ topic.category.name }}</span>-->
-<!--          <span class="card-views">👁️ {{ topic.view_count }}</span>-->
-<!--          <span class="card-likes">❤️ {{ topic.like_count }}</span>-->
-<!--        </div>-->
+        <div class="card-content">
+            <h3 class="card-title">{{ topic.title }}</h3>
 
-<!--        <div class="card-date">-->
-<!--            {{ topic.created_at|date:"d.m.Y" }}-->
-<!--        </div>-->
-      </div>
+            {% if topic.short_description %}
+            <p class="card-description">{{ topic.short_description }}</p>
+            {% endif %}
+        </div>
     </div>
-  {% empty %}
+    {% empty %}
     <div class="no-topics">
-      <p>😔 Темы не найдены</p>
-      {% if current_category %}
-        <p>В категории "{{ current_category.name }}" пока нет тем</p>
-      {% endif %}
+        <p>😔 Темы не найдены</p>
     </div>
-  {% endfor %}
+    {% endfor %}
 </div>
 </section>
 
@@ -281,13 +268,28 @@
 
 <script>
 // Выпадающий список
-function filterByCategory(categoryId) {
-  if (categoryId) {
-    window.location.href = `?category=${categoryId}`;
-  } else {
-    window.location.href = `/`;
-  }
+
+function filterTopics(categoryId) {
+    const cards = document.querySelectorAll('.card');
+    const noTopics = document.querySelector('.no-topics');
+
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        if (!categoryId || card.dataset.categoryId === categoryId) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // Показываем сообщение, если нет видимых карточек
+    if (noTopics) {
+        noTopics.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
 }
+
 
 // Кнопки фильтрации
 let activeFilters = {};
@@ -373,16 +375,6 @@ function resetFilters() {
   justify-content: space-between;
 }
 
-<!--.card::before {-->
-<!--  content: '';-->
-<!--  position: absolute;-->
-<!--  top: 0;-->
-<!--  left: 0;-->
-<!--  right: 0;-->
-<!--  height: 3px;-->
-<!--  background: linear-gradient(90deg, rgba(241, 73, 2, 1), rgba(246, 231, 216, 1));-->
-<!--}-->
-
 .card:hover {
   transform: translateY(-5px);
   box-shadow: 0 8px 25px rgba(241, 73, 2, 0.2);
@@ -424,14 +416,6 @@ function resetFilters() {
   margin-bottom: 10px;
   font-size: 0.8rem;
 }
-
-<!--.card-category {-->
-<!--  background: rgba(241, 73, 2, 0.2);-->
-<!--  color: rgba(241, 73, 2, 1);-->
-<!--  padding: 4px 8px;-->
-<!--  border-radius: 12px;-->
-<!--  border: 1px solid rgba(241, 73, 2, 0.3);-->
-<!--}-->
 
 .card-views, .card-likes {
   color: #888;
